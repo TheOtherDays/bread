@@ -1,4 +1,4 @@
-import StringIO, types, struct, collections, functools, json
+import io, types, struct, collections, functools, json
 from bitstring import ConstBitStream, pack
 
 LITTLE_ENDIAN = 0
@@ -79,7 +79,7 @@ def rightshift(bytelist, length, offset):
 
     shifted_bytes.append(next_byte)
 
-    return shifted_bytes[:bytes_to_keep]
+    return shifted_bytes[:int(bytes_to_keep)]
 
 class BitwiseWriter(object):
     def __init__(self, stream):
@@ -89,7 +89,7 @@ class BitwiseWriter(object):
 
     def write(self, data, length_in_bits):
         py_len = len(data)
-        bread_len_bytes = (length_in_bits + 7) / 8
+        bread_len_bytes = int((length_in_bits + 7) / 8)
 
         assert py_len == bread_len_bytes, (
             "Length of data in Python (%d) doesn't "
@@ -171,16 +171,16 @@ def process_spec(spec, handle_function, handle_field, handle_conditional):
             # to the input stream (this is typically done to parse padding bits)
             try:
                 handle_function(spec_line, global_options)
-            except Exception, e:
-                print "Error while processing %s: %s" % (spec_line, e)
+            except Exception as e:
+                print("Error while processing %s: %s" % (spec_line, e))
                 raise e
         elif len(spec_line) == 1:
             # Spec lines of length 1 are assumed to be functions, which are
             # treated the same as before
             try:
                 handle_function(spec_line[0], global_options)
-            except Exception, e:
-                print "Error while processing %s: %s" % (spec_line, e)
+            except Exception as e:
+                print("Error while processing %s: %s" % (spec_line, e))
                 raise e
         elif spec_line[0] == CONDITIONAL:
             # Push appropriate conditional spec on the front of the current
@@ -199,9 +199,9 @@ def process_spec(spec, handle_function, handle_field, handle_conditional):
 
             try:
                 handle_field(field_name, parse_function, options)
-            except Exception, e:
-                print "Error while processing field '%s': %s" % (
-                    field_name, e)
+            except Exception as e:
+                print("Error while processing field '%s': %s" % (
+                    field_name, e))
                 raise e
 
 def parse_from_reader(reader, spec, type_name='bread_struct', **kwargs):
@@ -261,7 +261,7 @@ def parse_from_reader(reader, spec, type_name='bread_struct', **kwargs):
     class NewStruct(object):
         def __eq__(self, other):
             for key in self.__dict__.keys():
-                print key
+                print(key)
                 if key not in other.__dict__:
                     return False
                 elif self.__dict__[key] != other.__dict__[key]:
@@ -457,7 +457,10 @@ def string(length, **kwargs):
             "%ds" % (length), reader.read(string_length).tobytes())[0]
 
     def string_writer(writer, value, **kwargs):
-        writer.write(bytearray(value.encode("utf-8")), string_length)
+        if isinstance(value, str):
+            writer.write(bytearray(value, 'utf-8'), string_length)
+        else:
+            writer.write(bytearray(value), string_length)
 
     return field_descriptor(string_parser, string_writer, length * 8)
 
@@ -476,7 +479,7 @@ boolean = field_descriptor(_boolean_reader, _boolean_writer, 1)
 
 def make_pad_writer(length):
     def pad_writer(writer, value, **kwargs):
-        writer.write(bytearray([0] * ((length + 7) / 8)), length)
+        writer.write(bytearray([0] * int((length + 7) / 8)), length)
 
     return pad_writer
 
@@ -527,7 +530,7 @@ def array(length, substruct):
 
         substructs = []
 
-        for i in xrange(length):
+        for i in range(length):
             substructs.append(subparse_function(**kwargs))
 
         return substructs
@@ -558,7 +561,7 @@ def _append_compressed_piece(piece, count, compressed_pieces):
         else:
             compressed_pieces.append(piece)
     else:
-        for i in xrange(count):
+        for i in range(count):
             compressed_pieces.append(piece)
 
 
