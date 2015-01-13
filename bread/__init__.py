@@ -1,7 +1,7 @@
 __title__ = 'bread'
-__version__ = '1.5.2'
+__version__ = '2.1.0'
 __author__ = 'Alex Rasmussen'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2015 Alex Rasmussen'
 
-from bread import *
+from .bread import *

@@ -1,5 +1,8 @@
+test-nose:
+	nosetests --with-coverage --cover-package=bread test.py
+
 test:
-	pypy -m nose --with-coverage --cover-html --cover-package=bread test.py
+	tox
 
 clean:
 	rm -rf cover

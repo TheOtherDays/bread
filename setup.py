@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='bread',
-      version='1.5.2',
+      version='2.1.0',
       description='Binary format parsing made easier',
       url='https://github.com/alexras/bread',
       author='Alex Rasmussen',
@@ -15,8 +15,9 @@ setup(name='bread',
           "Operating System :: OS Independent",
           "Programming Language :: Python",
           "Programming Language :: Python :: 2.7",
+          "Programming Language :: Python :: 3",
           "Topic :: Software Development :: Libraries :: Python Modules"],
       license='MIT',
-      packages=['bread'],
+      packages=['bread', 'bread.vendor'],
       requires=['bitstring'],
       install_requires=['bitstring'])
