@@ -4,7 +4,7 @@ import struct, sys, pprint, unittest, itertools, tempfile, os, json
 
 from nose.tools import assert_equal
 
-import bread as b
+from bread import bread as b
 
 def test_mask():
     for offset in range(8):
@@ -64,7 +64,7 @@ def test_write_single_byte():
 
     writer.close()
 
-    print "FINAL", map(bin, s.l)
+    print( "FINAL", map(bin, s.l))
     assert_equal(s.l, [0b10110101])
 
 def test_compress_format_string():
@@ -432,7 +432,7 @@ def test_enum():
         data = bytearray([42])
         result = b.parse(data, enum_test)
         assert False, "Failed to throw an error"
-    except ValueError, e:
+    except ValueError as e:
         # expected
         pass
 
